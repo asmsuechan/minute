@@ -2,7 +2,7 @@ import { parse } from './parser';
 import { generate } from './generator';
 import { analize } from './lexer';
 
-const convertToHTMLString = (markdown: string) => {
+export const convertToHTMLString = (markdown: string) => {
   const mdArray = analize(markdown);
   const asts = mdArray.map((md) => parse(md));
   const htmlString = generate(asts);
