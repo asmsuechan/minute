@@ -1,10 +1,15 @@
-import { Token } from './models/token'
+import { Token } from './models/token';
+import { BlockMdWithType } from './models/block_md_with_type';
 
 const TEXT = 'text';
 const STRONG = 'strong';
 
-const STRONG_ELM_REGXP = /\*\*(.*?)\*\*/
+const STRONG_ELM_REGXP = /\*\*(.*?)\*\*/;
 const LIST_REGEXP = /^( *)([-|\*|\+] (.+))$/m;
+export const PRE_REGEXP = /^```[^`]*$/;
+export const TABLE_HEAD_BODY_REGEXP = /(?=\|(.+?)\|)/g;
+export const TABLE_ALIGN_REGEXP = /(?=\|([-|:]+?)\|)/g;
+export const BLOCKQUOTE_REGEXP = /^([>| ]+)(.+)/;
 
 const genTextElement = (id: number, text: string, parent: Token): Token => {
   return {
@@ -13,7 +18,7 @@ const genTextElement = (id: number, text: string, parent: Token): Token => {
     content: text,
     parent,
   };
-}
+};
 
 const genStrongElement = (id: number, text: string, parent: Token): Token => {
   return {
@@ -22,25 +27,26 @@ const genStrongElement = (id: number, text: string, parent: Token): Token => {
     content: '',
     parent,
   };
-}
-
-const matchWithStrongRegxp = (text: string) => {
-  return text.match(STRONG_ELM_REGXP);
-}
-
-const matchWithListRegxp = (text: string) => {
-  return text.match(LIST_REGEXP);
-}
+};
 
 const analize = (markdown: string) => {
   const NEUTRAL_STATE = 'neutral_state';
   const LIST_STATE = 'list_state';
+  const PRE_STATE = 'pre_state';
+  const TABLE_HEAD_STATE = 'table_head_state';
+  const TABLE_ALIGN_STATE = 'table_align_state';
+  const TABLE_BODY_STATE = 'table_body_state';
+  const BLOCKQUOTE_STATE = 'blockquote_state';
+
   let state = NEUTRAL_STATE;
 
   let lists = '';
+  let pre = '';
+  let table = '';
+  let blockquote = '';
 
   const rawMdArray = markdown.split(/\r\n|\r|\n/);
-  let mdArray: Array<string> = [];
+  let mdArray: Array<BlockMdWithType> = [];
 
   rawMdArray.forEach((md, index) => {
     const listMatch = md.match(LIST_REGEXP);
@@ -48,25 +54,90 @@ const analize = (markdown: string) => {
       state = LIST_STATE;
       lists += `${md}\n`;
     } else if (state === LIST_STATE && listMatch) {
-      // 最後の行がリストだった場合
-      if (index === rawMdArray.length - 1) {
-        lists += `${md}`;
-        mdArray.push(lists)
-      } else {
-        lists += `${md}\n`;
-      }
+      lists += `${md}\n`;
     } else if (state === LIST_STATE && !listMatch) {
       state = NEUTRAL_STATE;
-      mdArray.push(lists)
-      lists = ''; // 複数のリストがあった場合のためリスト変数をリセットする
+      mdArray.push({ mdType: 'list', content: lists });
+      lists = '';
+    }
+    if (lists.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
+      mdArray.push({ mdType: 'list', content: lists });
     }
 
-    if (lists.length === 0)
-      mdArray.push(md);
+    const preMatch = md.match(PRE_REGEXP);
+    if (state === NEUTRAL_STATE && preMatch) {
+      state = PRE_STATE;
+    } else if (state === PRE_STATE && preMatch) {
+      state = NEUTRAL_STATE;
+    } else if (state === PRE_STATE && !preMatch) {
+      pre += `${md}`;
+      pre.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/\n$/, '');
+      mdArray.push({ mdType: 'pre', content: pre });
+    }
+
+    const tableHeadBodyMatch = md.match(TABLE_HEAD_BODY_REGEXP);
+    const tableAlignMatch = md.match(TABLE_ALIGN_REGEXP);
+    if (state === NEUTRAL_STATE && tableHeadBodyMatch) {
+      state = TABLE_HEAD_STATE;
+      table += `${md}\n`;
+    } else if (state === TABLE_HEAD_STATE && tableAlignMatch) {
+      state = TABLE_ALIGN_STATE;
+      table += `${md}\n`;
+    } else if (state === TABLE_HEAD_STATE && !tableAlignMatch) {
+      state = NEUTRAL_STATE;
+      table = '';
+    } else if (state === TABLE_ALIGN_STATE && tableHeadBodyMatch) {
+      state = TABLE_BODY_STATE;
+      table += `${md}\n`;
+    } else if (state === TABLE_BODY_STATE && !tableHeadBodyMatch) {
+      state = NEUTRAL_STATE;
+      table = '';
+    } else if (state === TABLE_ALIGN_STATE && !tableHeadBodyMatch) {
+      state = NEUTRAL_STATE;
+      table = '';
+    }
+    if (table.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
+      mdArray.push({ mdType: 'table', content: table.replace(/\n$/, '') });
+    }
+
+    const blockquoteMatch = md.match(BLOCKQUOTE_REGEXP);
+    if (state === NEUTRAL_STATE && blockquoteMatch) {
+      state = BLOCKQUOTE_STATE;
+      blockquote += `${md}\n`;
+    } else if (state === BLOCKQUOTE_STATE && md.length > 0) {
+      blockquote += `${md}\n`;
+    } else if (state === BLOCKQUOTE_STATE && md === '') {
+      state = NEUTRAL_STATE;
+      blockquote = '';
+    }
+    if (blockquote.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
+      mdArray.push({
+        mdType: 'blockquote',
+        content: blockquote.replace(/\n$/, ''),
+      });
+    }
+
+    if (
+      lists.length === 0 &&
+      state !== LIST_STATE &&
+      pre.length === 0 &&
+      state !== PRE_STATE &&
+      table.length === 0 &&
+      state !== TABLE_ALIGN_STATE &&
+      state !== TABLE_BODY_STATE &&
+      state !== TABLE_HEAD_STATE &&
+      blockquote.length === 0 &&
+      state !== BLOCKQUOTE_STATE
+    )
+      mdArray.push({ mdType: 'text', content: md });
+
+    if (md.length === 0) {
+      mdArray.push({ mdType: 'break', content: '\n' });
+      return;
+    }
   });
 
   return mdArray;
 };
 
-
-export { genTextElement, genStrongElement, matchWithStrongRegxp, matchWithListRegxp, analize }
+export { genTextElement, genStrongElement, analize };
