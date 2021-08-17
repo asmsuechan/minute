@@ -3,4 +3,4 @@ export type Token = {
   parent: Token;
   elmType: string;
   content: string;
-}
+};
