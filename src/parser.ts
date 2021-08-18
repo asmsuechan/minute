@@ -172,9 +172,9 @@ const _tokenizeList = (listString: string) => {
       } else if (currentIndentLevel > prevIndentLevel) {
         // Create a parent
         id += 1;
+        const lastToken = tokens[tokens.length - 1];
         const parentToken =
-          tokens.reverse().find((t) => ['code', 'link', 'italic', 'si', 'strong', 'text'].includes(t.elmType)) ||
-          tokens[tokens.length - 1];
+          match && ['code', 'italic', 'si', 'strong'].includes(lastToken.parent.elmType) ? lastToken.parent : lastToken;
         const newParent: Token = {
           id,
           elmType: listType,
@@ -196,7 +196,7 @@ const _tokenizeList = (listString: string) => {
       };
       parents.push(listToken);
       tokens.push(listToken);
-      const listText: Token[] = _tokenizeText(match[3], id, listToken);
+      const listText = _tokenizeText(match[3], id, listToken);
       id += listText.length;
       tokens.push(...listText);
     });

@@ -4,8 +4,8 @@ import { BlockMdWithType } from './models/block_md_with_type';
 const TEXT = 'text';
 const STRONG = 'strong';
 
-const STRONG_ELM_REGXP = /\*\*(.*?)\*\*/;
 const LIST_REGEXP = /^( *)([-|\*|\+] (.+))$/m;
+const OL_REGEXP = /^( *)(\d\. (.+))$/m;
 export const PRE_REGEXP = /^```[^`]*$/;
 export const TABLE_HEAD_BODY_REGEXP = /(?=\|(.+?)\|)/g;
 export const TABLE_ALIGN_REGEXP = /(?=\|([-|:]+?)\|)/g;
@@ -49,7 +49,7 @@ const analize = (markdown: string) => {
   let mdArray: Array<BlockMdWithType> = [];
 
   rawMdArray.forEach((md, index) => {
-    const listMatch = md.match(LIST_REGEXP);
+    const listMatch = md.match(LIST_REGEXP) || md.match(OL_REGEXP);
     if (state === NEUTRAL_STATE && listMatch) {
       state = LIST_STATE;
       lists += `${md}\n`;

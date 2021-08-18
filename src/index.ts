@@ -15,3 +15,6 @@ export const convertToHTMLString = (markdown: string) => {
 // console.log(convertToHTMLString('* **bbbbb**'));
 // console.log(convertToHTMLString('# h1\n__aaaaa__'));
 // console.log(convertToHTMLString('[aaa](https://a.com)'));
+// console.log(convertToHTMLString('* a\n* b\n  * c\n* d'));
+// console.log(convertToHTMLString('* **bold**\n  * __nested__'));
+// console.log(convertToHTMLString('1. a'));

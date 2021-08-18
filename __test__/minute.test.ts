@@ -19,10 +19,10 @@ test('Heading', () => {
 
 test('Link', () => {
   const testCases = [
-    ['[example](https://example.com)', '<a src="https://example.com">example</a>'],
+    ['[example](https://example.com)', '<a href="https://example.com">example</a>'],
     ['[](https://example.com)', ''],
-    ['[no-link]()', '<a src="">no-link</a>'],
-    ['[link with **bold**](https://example.com)', '<a src="https://example.com">link with <strong>bold</strong></a>'],
+    ['[no-link]()', '<a href="">no-link</a>'],
+    ['[link with **bold**](https://example.com)', '<a href="https://example.com">link with <strong>bold</strong></a>'],
   ];
 
   testCases.forEach((testCase) => {
@@ -105,6 +105,7 @@ test('List', () => {
       '* **bold**\n  * __nested__\n  * ~~nested~~\n* indent',
       '<ul><li><strong>bold</strong><ul><li><i>nested</i></li><li><si>nested</si></li></ul><li>indent</li></li></ul>',
     ],
+    ['* a\n* b\n  * c\n* d', '<ul><li>a</li><li>b<ul><li>c</li></ul><li>d</li></li></ul>'],
   ];
 
   testCases.forEach((testCase) => {
@@ -133,7 +134,7 @@ test('Table', () => {
     ],
     [
       '|left|center|right|\n|:-|:-:|-:|\n|**left**|[center](https://example.com)|right|',
-      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left"><strong>left</strong></td><td align="center"><a src="https://example.com">center</a></td><td align="right">right</td></tbody></table>',
+      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left"><strong>left</strong></td><td align="center"><a href="https://example.com">center</a></td><td align="right">right</td></tbody></table>',
     ],
   ];
 
@@ -144,8 +145,8 @@ test('Table', () => {
 
 test('Pre', () => {
   const testCases = [
-    ['```\ncodeblock\n```', '<pre>codeblock\n</pre>'],
-    ['```\ncodeblock**bold**\n```', '<pre>codeblock**bold**\n</pre>'],
+    ['```\ncodeblock\n```', '<pre>codeblock</pre>'],
+    ['```\ncodeblock**bold**\n```', '<pre>codeblock**bold**</pre>'],
   ];
 
   testCases.forEach((testCase) => {
@@ -175,18 +176,6 @@ test('with HTML elements', () => {
 test('with an irregular elements', () => {
   const testCases = [['__a**b__c**d__e**', '<i>a**b</i>c<strong>d__e</strong>']];
 
-  testCases.forEach((testCase) => {
-    expect(convertToHTMLString(testCase[0])).toBe(testCase[1]);
-  });
-});
-
-test('', () => {
-  const testCases = [
-    [
-      '# Heading 1 \n## Heading 2 \n* List \n  * nested List \n* List \n \n**bold**__italic__ \n \n---\n \n|col1|col2|col3| \n|:-|:-:|-:| \n|right|center|left|',
-      '',
-    ],
-  ];
   testCases.forEach((testCase) => {
     expect(convertToHTMLString(testCase[0])).toBe(testCase[1]);
   });
