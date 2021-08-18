@@ -1,9 +1,13 @@
 {
-  "name": "minute",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "minutemd",
+  "version": "1.0.4",
+  "main": "dist/src/index.js",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "exec": "ts-node src/index.ts",
     "test": "jest",
     "lint": "prettier --write src/**/*.ts"
