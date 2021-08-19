@@ -45,7 +45,8 @@ const analize = (markdown: string) => {
   let table = '';
   let blockquote = '';
 
-  const rawMdArray = markdown.replace(/[\r\n|\r|\n/]$/, '').split(/\r\n|\r|\n/);
+  // const rawMdArray = markdown.replace(/[\r\n|\r|\n/]$/, '').split(/\r\n|\r|\n/);
+  const rawMdArray = markdown.split(/\r\n|\r|\n/);
   let mdArray: Array<BlockMdWithType> = [];
 
   rawMdArray.forEach((md, index) => {
@@ -71,13 +72,8 @@ const analize = (markdown: string) => {
       state = NEUTRAL_STATE;
     } else if (state === PRE_STATE && !preMatch) {
       pre += md;
-      pre = pre
-        .replace(/&/g, '&amp;')
-        .replace(/>/g, '&gt;')
-        .replace(/</g, '&lt;')
-        .replace(/"/g, '&quot;')
-        .replace(/\n$/, '');
-      if (md.length === 0) pre += '\n';
+      pre = pre.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+      pre += '\n';
     }
     if (pre.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
       mdArray.push({ mdType: 'pre', content: pre });
@@ -138,10 +134,10 @@ const analize = (markdown: string) => {
     )
       mdArray.push({ mdType: 'text', content: md });
 
-    if (md.length === 0 && state !== PRE_STATE) {
-      mdArray.push({ mdType: 'break', content: '' });
-      return;
-    }
+    // if (md.length === 0 && state !== PRE_STATE) {
+    //   mdArray.push({ mdType: 'break', content: '' });
+    //   return;
+    // }
   });
 
   return mdArray;

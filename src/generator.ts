@@ -36,6 +36,9 @@ const _getInsertPosition = (content: string) => {
 const _createMergedContent = (currentToken: Token | MergedToken, parentToken: Token | MergedToken) => {
   let content = '';
   switch (parentToken.elmType) {
+    case 'paragraph':
+      content = `<p>${currentToken.content}</p>`;
+      break;
     case 'li':
       content = `<li>${currentToken.content}</li>`;
       break;

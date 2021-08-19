@@ -12,8 +12,6 @@ export const parse = (markdownRow: BlockMdWithType) => {
     return _tokenizeTable(markdownRow.content);
   } else if (markdownRow.mdType === 'blockquote') {
     return _tokenizeBlockquote(markdownRow.content);
-  } else if (markdownRow.mdType === 'break') {
-    return _createBreakToken();
   }
   return _tokenizeText(markdownRow.content);
 };
@@ -25,7 +23,7 @@ const rootToken: Token = {
   parent: {} as Token,
 };
 
-const LIST_REGEXP = /^( *)([-|\*|\+] (.+))$/m;
+const LIST_REGEXP = /^( *)([-\*\+] (.+))$/m;
 const OL_REGEXP = /^( *)(\d\. (.+))$/m;
 const UL = 'ul';
 const LIST = 'li';
@@ -42,11 +40,11 @@ const textElmRegexps = [
   { elmType: 'img', regexp: /\!\[(.*)\]\((.+)\)/ },
   {
     elmType: 'link',
-    regexp: /\[(.*?)\]\((.*?)\)/,
+    regexp: /\[(.*)\]\((.*)\)/,
   },
-  { elmType: 'strong', regexp: /\*\*(.*?)\*\*/ },
-  { elmType: 'italic', regexp: /__(.*?)__/ },
-  { elmType: 'si', regexp: /~~(.*?)~~/ },
+  { elmType: 'strong', regexp: /\*\*(.*)\*\*/ },
+  { elmType: 'italic', regexp: /__(.*)__/ },
+  { elmType: 'si', regexp: /~~(.*)~~/ },
   {
     elmType: 'list',
     regexp: LIST_REGEXP, // * list or - list
@@ -64,6 +62,7 @@ const _tokenizeText = (textElement: string, initialId: number = 0, initialRoot: 
   const _tokenize = (originalText: string, p: Token) => {
     let processingText = originalText;
     parent = p;
+    let pToken = p;
     while (processingText.length !== 0) {
       const matchArray = textElmRegexps
         .map((regexp) => {
@@ -76,13 +75,38 @@ const _tokenizeText = (textElement: string, initialId: number = 0, initialRoot: 
 
       if (matchArray.length === 0) {
         id += 1;
-        const onlyText = genTextElement(id, processingText, parent);
+        const onlyText = genTextElement(id, processingText, pToken);
         processingText = '';
         elements.push(onlyText);
       } else {
         const outerMostElement = matchArray.reduce((prev, curr) =>
           Number(prev.matchArray.index) < Number(curr.matchArray.index) ? prev : curr
         );
+        if (
+          outerMostElement.elmType !== 'h1' &&
+          outerMostElement.elmType !== 'h2' &&
+          outerMostElement.elmType !== 'h3' &&
+          outerMostElement.elmType !== 'h4' &&
+          parent.elmType !== 'h1' &&
+          parent.elmType !== 'h2' &&
+          parent.elmType !== 'h3' &&
+          parent.elmType !== 'h4' &&
+          parent.elmType !== 'ul' &&
+          parent.elmType !== 'li' &&
+          parent.elmType !== 'ol' &&
+          parent.elmType !== 'link' &&
+          parent.elmType !== 'code'
+        ) {
+          id += 1;
+          pToken = {
+            id,
+            elmType: 'paragraph',
+            content: '',
+            parent,
+          } as Token;
+          parent = pToken;
+          elements.push(parent);
+        }
         if (Number(outerMostElement.matchArray.index) > 0) {
           // "aaa**bb**cc" -> TEXT Token + "**bb**cc" にする
           const text = processingText.substring(0, Number(outerMostElement.matchArray.index));
@@ -105,10 +129,12 @@ const _tokenizeText = (textElement: string, initialId: number = 0, initialRoot: 
           } else if (outerMostElement.elmType === 'link') {
             attributes.push({ attrName: 'href', attrValue: outerMostElement.matchArray[2] });
           }
+          const elmType = outerMostElement.elmType;
+          const content = outerMostElement.matchArray[1];
           const elm: Token = {
             id,
-            elmType: outerMostElement.elmType,
-            content: outerMostElement.matchArray[1],
+            elmType,
+            content,
             parent,
             attributes,
           };
