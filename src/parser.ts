@@ -376,7 +376,7 @@ const _createBreakToken = () => {
     {
       id: 1,
       elmType: 'break',
-      content: '<br />',
+      content: '',
       parent: rootToken,
     },
   ] as Token[];

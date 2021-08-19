@@ -45,7 +45,7 @@ const analize = (markdown: string) => {
   let table = '';
   let blockquote = '';
 
-  const rawMdArray = markdown.split(/\r\n|\r|\n/);
+  const rawMdArray = markdown.replace(/[\r\n|\r|\n/]$/, '').split(/\r\n|\r|\n/);
   let mdArray: Array<BlockMdWithType> = [];
 
   rawMdArray.forEach((md, index) => {
@@ -127,11 +127,11 @@ const analize = (markdown: string) => {
       state !== TABLE_HEAD_STATE &&
       blockquote.length === 0 &&
       state !== BLOCKQUOTE_STATE &&
-      md !== ''
+      md.length !== 0
     )
       mdArray.push({ mdType: 'text', content: md });
 
-    if (md === '') {
+    if (md.length === 0) {
       mdArray.push({ mdType: 'break', content: '' });
       return;
     }

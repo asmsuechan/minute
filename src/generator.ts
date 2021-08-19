@@ -3,7 +3,13 @@ import { MergedToken } from './models/merged_token';
 
 const _generateHtmlString = (tokens: Array<Token | MergedToken>) => {
   return tokens
-    .map((t) => t.content)
+    .map((t) => {
+      if (t.elmType === 'break') {
+        return '<br />';
+      } else {
+        return t.content;
+      }
+    })
     .reverse()
     .join('');
 };

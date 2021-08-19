@@ -134,11 +134,11 @@ test('Table', () => {
     ],
     [
       '|left|center|right|\n|:-|:-:|-:|\n|left|center|right|\n',
-      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table><br />',
+      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table>',
     ],
     [
       '|left|center|right|\n|:-|:-:|-:|\n|left|center|right|\n\n',
-      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table><br /><br />',
+      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table><br />',
     ],
     [
       '|left|center|right|\n|:-|:-:|-:|\n|**left**|[center](https://example.com)|right|',
@@ -183,6 +183,20 @@ test('with HTML elements', () => {
 
 test('with an irregular elements', () => {
   const testCases = [['__a**b__c**d__e**', '<i>a**b</i>c<strong>d__e</strong>']];
+
+  testCases.forEach((testCase) => {
+    expect(convertToHTMLString(testCase[0])).toBe(testCase[1]);
+  });
+});
+
+test('Break', () => {
+  const testCases = [
+    ['\n', '<br />'],
+    ['a\nb\n', 'ab'],
+    ['\n\n', '<br /><br />'],
+    ['\n\na', '<br /><br />a'],
+    ['a\n\nb', 'a<br />b'],
+  ];
 
   testCases.forEach((testCase) => {
     expect(convertToHTMLString(testCase[0])).toBe(testCase[1]);

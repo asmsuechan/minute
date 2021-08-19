@@ -8,3 +8,6 @@ export const convertToHTMLString = (markdown: string) => {
   const htmlString = generate(asts);
   return htmlString;
 };
+
+// console.log(convertToHTMLString('\n'));
+// console.log(convertToHTMLString('a\n\nb\nc'));
