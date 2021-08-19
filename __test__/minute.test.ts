@@ -153,8 +153,9 @@ test('Table', () => {
 
 test('Pre', () => {
   const testCases = [
-    ['```\ncodeblock\n```', '<pre>codeblock</pre>'],
-    ['```\ncodeblock**bold**\n```', '<pre>codeblock**bold**</pre>'],
+    ['```\ncodeblock\n```', '<pre><code>codeblock</code></pre>'],
+    ['```\ncodeblock**bold**\n```', '<pre><code>codeblock**bold**</code></pre>'],
+    ['```\ncodeblock**bold**\n\na\n```', '<pre><code>codeblock**bold**\na</code></pre>'],
   ];
 
   testCases.forEach((testCase) => {

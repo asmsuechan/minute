@@ -71,7 +71,15 @@ const analize = (markdown: string) => {
       state = NEUTRAL_STATE;
     } else if (state === PRE_STATE && !preMatch) {
       pre += md;
-      pre.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/\n$/, '');
+      pre = pre
+        .replace(/&/g, '&amp;')
+        .replace(/>/g, '&gt;')
+        .replace(/</g, '&lt;')
+        .replace(/"/g, '&quot;')
+        .replace(/\n$/, '');
+      if (md.length === 0) pre += '\n';
+    }
+    if (pre.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
       mdArray.push({ mdType: 'pre', content: pre });
     }
 
@@ -130,7 +138,7 @@ const analize = (markdown: string) => {
     )
       mdArray.push({ mdType: 'text', content: md });
 
-    if (md.length === 0) {
+    if (md.length === 0 && state !== PRE_STATE) {
       mdArray.push({ mdType: 'break', content: '' });
       return;
     }
