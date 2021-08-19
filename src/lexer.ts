@@ -106,7 +106,6 @@ const analize = (markdown: string) => {
       blockquote += `${md}\n`;
     } else if (state === BLOCKQUOTE_STATE && md === '') {
       state = NEUTRAL_STATE;
-      blockquote = '';
     }
     if (blockquote.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
       mdArray.push({

@@ -165,6 +165,8 @@ test('Pre', () => {
 test('Blockquote', () => {
   const testCases = [
     ['> quote', '<blockquote>quote</blockquote>'],
+    ['> quote\n', '<blockquote>quote</blockquote>'],
+    ['> quote\n\n', '<blockquote>quote</blockquote><br />'],
     ['> quote\n>> quote', '<blockquote>quote<blockquote>quote</blockquote></blockquote>'],
   ];
 
