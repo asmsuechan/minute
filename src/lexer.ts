@@ -70,9 +70,11 @@ const analize = (markdown: string) => {
       state = PRE_STATE;
     } else if (state === PRE_STATE && preMatch) {
       state = NEUTRAL_STATE;
+      mdArray.push({ mdType: 'pre', content: pre });
+      pre = '';
+      return;
     } else if (state === PRE_STATE && !preMatch) {
-      pre += md;
-      pre = pre.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+      pre += md.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
       pre += '\n';
     }
     if (pre.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {

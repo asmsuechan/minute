@@ -159,6 +159,7 @@ test('Pre', () => {
     ['```\ncodeblock\n```', '<pre><code>codeblock\n</code></pre>'],
     ['```\ncodeblock**bold**\n```', '<pre><code>codeblock**bold**\n</code></pre>'],
     ['```\ncodeblock**bold**\n\na\n```', '<pre><code>codeblock**bold**\n\na\n</code></pre>'],
+    ['```\ncodeblock**bold**\n```\n\n', '<pre><code>codeblock**bold**\n</code></pre>'],
   ];
 
   testCases.forEach((testCase) => {
