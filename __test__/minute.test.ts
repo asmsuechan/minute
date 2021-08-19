@@ -133,6 +133,14 @@ test('Table', () => {
       '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table>',
     ],
     [
+      '|left|center|right|\n|:-|:-:|-:|\n|left|center|right|\n',
+      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table><br />',
+    ],
+    [
+      '|left|center|right|\n|:-|:-:|-:|\n|left|center|right|\n\n',
+      '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left">left</td><td align="center">center</td><td align="right">right</td></tbody></table><br /><br />',
+    ],
+    [
       '|left|center|right|\n|:-|:-:|-:|\n|**left**|[center](https://example.com)|right|',
       '<table><thead><tr><th align="left">left</th><th align="center">center</th><th align="right">right</th></tr></thead><tbody><td align="left"><strong>left</strong></td><td align="center"><a href="https://example.com">center</a></td><td align="right">right</td></tbody></table>',
     ],

@@ -12,6 +12,8 @@ export const parse = (markdownRow: BlockMdWithType) => {
     return _tokenizeTable(markdownRow.content);
   } else if (markdownRow.mdType === 'blockquote') {
     return _tokenizeBlockquote(markdownRow.content);
+  } else if (markdownRow.mdType === 'break') {
+    return _createBreakToken();
   }
   return _tokenizeText(markdownRow.content);
 };
@@ -367,4 +369,15 @@ const _tokenizeBlockquote = (blockquote: string) => {
     }
   });
   return tokens;
+};
+
+const _createBreakToken = () => {
+  return [
+    {
+      id: 1,
+      elmType: 'break',
+      content: '<br />',
+      parent: rootToken,
+    },
+  ] as Token[];
 };

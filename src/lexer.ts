@@ -70,7 +70,7 @@ const analize = (markdown: string) => {
     } else if (state === PRE_STATE && preMatch) {
       state = NEUTRAL_STATE;
     } else if (state === PRE_STATE && !preMatch) {
-      pre += `${md}`;
+      pre += md;
       pre.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/\n$/, '');
       mdArray.push({ mdType: 'pre', content: pre });
     }
@@ -85,19 +85,17 @@ const analize = (markdown: string) => {
       table += `${md}\n`;
     } else if (state === TABLE_HEAD_STATE && !tableAlignMatch) {
       state = NEUTRAL_STATE;
-      table = '';
     } else if (state === TABLE_ALIGN_STATE && tableHeadBodyMatch) {
       state = TABLE_BODY_STATE;
       table += `${md}\n`;
     } else if (state === TABLE_BODY_STATE && !tableHeadBodyMatch) {
       state = NEUTRAL_STATE;
-      table = '';
     } else if (state === TABLE_ALIGN_STATE && !tableHeadBodyMatch) {
       state = NEUTRAL_STATE;
-      table = '';
     }
     if (table.length > 0 && (state === NEUTRAL_STATE || index === rawMdArray.length - 1)) {
       mdArray.push({ mdType: 'table', content: table.replace(/\n$/, '') });
+      table = '';
     }
 
     const blockquoteMatch = md.match(BLOCKQUOTE_REGEXP);
@@ -115,6 +113,7 @@ const analize = (markdown: string) => {
         mdType: 'blockquote',
         content: blockquote.replace(/\n$/, ''),
       });
+      blockquote = '';
     }
 
     if (
@@ -127,12 +126,13 @@ const analize = (markdown: string) => {
       state !== TABLE_BODY_STATE &&
       state !== TABLE_HEAD_STATE &&
       blockquote.length === 0 &&
-      state !== BLOCKQUOTE_STATE
+      state !== BLOCKQUOTE_STATE &&
+      md !== ''
     )
       mdArray.push({ mdType: 'text', content: md });
 
-    if (md.length === 0) {
-      mdArray.push({ mdType: 'break', content: '\n' });
+    if (md === '') {
+      mdArray.push({ mdType: 'break', content: '' });
       return;
     }
   });
