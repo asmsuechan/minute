@@ -60,7 +60,7 @@ const _createMergedContent = (currentToken: Token | MergedToken, parentToken: To
       content = `<i>${currentToken.content}</i>`;
       break;
     case 'si':
-      content = `<si>${currentToken.content}</si>`;
+      content = `<strike>${currentToken.content}</strike>`;
       break;
     case 'h1':
       content = `<h1>${currentToken.content}</h1>`;

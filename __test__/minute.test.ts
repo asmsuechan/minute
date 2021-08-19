@@ -65,8 +65,8 @@ test('Italic', () => {
 
 test('Si', () => {
   const testCases = [
-    ['~~si~~', '<si>si</si>'],
-    ['normal~~si~~normal', 'normal<si>si</si>normal'],
+    ['~~si~~', '<strike>si</strike>'],
+    ['normal~~si~~normal', 'normal<strike>si</strike>normal'],
   ];
 
   testCases.forEach((testCase) => {
@@ -103,7 +103,7 @@ test('List', () => {
     ['* **bold**\n  * __nested__', '<ul><li><strong>bold</strong><ul><li><i>nested</i></li></ul></li></ul>'],
     [
       '* **bold**\n  * __nested__\n  * ~~nested~~\n* indent',
-      '<ul><li><strong>bold</strong><ul><li><i>nested</i></li><li><si>nested</si></li></ul><li>indent</li></li></ul>',
+      '<ul><li><strong>bold</strong><ul><li><i>nested</i></li><li><strike>nested</strike></li></ul><li>indent</li></li></ul>',
     ],
     ['* a\n* b\n  * c\n* d', '<ul><li>a</li><li>b<ul><li>c</li></ul><li>d</li></li></ul>'],
   ];
