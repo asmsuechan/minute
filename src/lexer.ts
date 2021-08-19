@@ -5,7 +5,7 @@ const TEXT = 'text';
 const STRONG = 'strong';
 
 const LIST_REGEXP = /^( *)([-|\*|\+] (.+))$/m;
-const OL_REGEXP = /^( *)(\d\. (.+))$/m;
+const OL_REGEXP = /^( *)((\d+)\. (.+))$/m;
 export const PRE_REGEXP = /^```[^`]*$/;
 export const TABLE_HEAD_BODY_REGEXP = /(?=\|(.+?)\|)/g;
 export const TABLE_ALIGN_REGEXP = /(?=\|([-|:]+?)\|)/g;

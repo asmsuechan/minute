@@ -24,7 +24,7 @@ const rootToken: Token = {
 };
 
 const LIST_REGEXP = /^( *)([-\*\+] (.+))$/m;
-const OL_REGEXP = /^( *)(\d\. (.+))$/m;
+const OL_REGEXP = /^( *)((\d+)\. (.+))$/m;
 const UL = 'ul';
 const LIST = 'li';
 const OL = 'ol';
@@ -224,7 +224,8 @@ const _tokenizeList = (listString: string) => {
       };
       parents.push(listToken);
       tokens.push(listToken);
-      const listText = _tokenizeText(match[3], id, listToken);
+      const listContent = listMatch ? match[3] : match[4];
+      const listText = _tokenizeText(listContent, id, listToken);
       id += listText.length;
       tokens.push(...listText);
     });

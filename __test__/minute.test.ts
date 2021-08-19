@@ -119,6 +119,7 @@ test('List', () => {
 test('Ol', () => {
   const testCases = [
     ['1. a', '<ol><li>a</li></ol>'],
+    ['11. a', '<ol><li>a</li></ol>'],
     ['1. a\n2. b', '<ol><li>a</li><li>b</li></ol>'],
     ['1. a\n  1. b', '<ol><li>a<ol><li>b</li></ol></li></ol>'],
     ['1. a\n  1. b**bold**', '<ol><li>a<ol><li>b<strong>bold</strong></li></ol></li></ol>'],
