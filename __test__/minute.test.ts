@@ -180,6 +180,14 @@ test('Blockquote', () => {
   });
 });
 
+test('Text', () => {
+  const testCases = [['text', '<p>text</p>']];
+
+  testCases.forEach((testCase) => {
+    expect(convertToHTMLString(testCase[0])).toBe(testCase[1]);
+  });
+});
+
 test('with HTML elements', () => {
   const testCases = [['<strong>bold</strong>**bold**', '<p><strong>bold</strong><strong>bold</strong></p>']];
 

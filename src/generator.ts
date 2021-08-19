@@ -6,6 +6,9 @@ const _generateHtmlString = (tokens: Array<Token | MergedToken>) => {
     .map((t) => {
       if (t.elmType === 'break') {
         return '<br />';
+      } else if (tokens.length === 1 && tokens[0].elmType === 'text') {
+        // MUST FIX: Move this section to parser if possible
+        return `<p>${t.content}</p>`;
       } else {
         return t.content;
       }
