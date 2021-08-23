@@ -14,7 +14,7 @@ import { convertToHTMLString } from 'minutemd'
 
 const md = '# heading1';
 convertToHTMLString(md)
-// This output '<h1>heading1</h1>'
+// This outputs '<h1>heading1</h1>'
 ```
 
 ## Playground
